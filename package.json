@@ -1,0 +1,19 @@
+{
+  "name": "vibe-coding-hackathon-2.0",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"pnpm run server\" \"pnpm run client\"",
+    "server": "cd backend && pnpm run dev",
+    "client": "cd frontend && pnpm run dev",
+    "install-deps": "cd backend && pnpm install && cd ../frontend && pnpm install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
