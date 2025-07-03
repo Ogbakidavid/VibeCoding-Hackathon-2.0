@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-const { registerUser } = require('../middleware/auth');
+const { registerUser, findUserByEmail } = require('../middleware/auth');
 const { strictLimiter } = require('../config/server');
 
 router.post('/register', strictLimiter, [
@@ -19,13 +19,13 @@ router.post('/register', strictLimiter, [
     try {
         const { email, password, firstName, lastName } = req.body;
         const user = await registerUser(email, password, firstName, lastName);
-        
+
         const token = jwt.sign(
-            { userId: user.userId, email }, 
+            { userId: user.userId, email },
             process.env.JWT_SECRET || 'fallback_secret',
             { expiresIn: '24h' }
         );
-        
+
         res.status(201).json({
             success: true,
             token,
@@ -34,7 +34,7 @@ router.post('/register', strictLimiter, [
                 email,
                 firstName,
                 lastName,
-                subscriptionTier: 'FREE'
+                subscriptionTier: user.subscriptionTier
             }
         });
     } catch (error) {
@@ -53,31 +53,37 @@ router.post('/login', strictLimiter, [
 
     try {
         const { email, password } = req.body;
-        const user = users.get(email);
-        
-        if (!user || !await bcrypt.compare(password, user.password)) {
+        const user = findUserByEmail(email);
+        if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        
+
+        // Use bcrypt from your middleware
+        const bcrypt = require('bcryptjs');
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
         const token = jwt.sign(
-            { userId: user.userId, email }, 
+            { userId: user.userId, email },
             process.env.JWT_SECRET || 'fallback_secret',
             { expiresIn: '24h' }
         );
-        
+
         res.json({
             success: true,
             token,
             user: {
                 userId: user.userId,
-                email,
+                email: user.email,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 subscriptionTier: user.subscriptionTier
             }
         });
     } catch (error) {
-        res.status(500).json({ error: 'Login failed' });
+        res.status(500).json({ error: 'Login failed', details: error.message });
     }
 });
 

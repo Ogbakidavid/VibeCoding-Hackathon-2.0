@@ -38,13 +38,17 @@ const registerUser = async (email, password, firstName, lastName) => {
         isActive: true
     };
     
-    users.set(email, user);
-    users.set(userId, user);
+    users.set(email, user); // Only store by email
     
     return user;
 };
 
+const findUserByEmail = (email) => {
+    return users.get(email);
+};
+
 module.exports = {
     authenticateToken,
-    registerUser
+    registerUser,
+    findUserByEmail
 };

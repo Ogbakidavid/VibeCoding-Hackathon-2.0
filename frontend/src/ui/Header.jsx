@@ -1,11 +1,13 @@
-import React from 'react';
 import { Zap, Bell, Settings } from 'lucide-react';
-import { SUBSCRIPTION_TIERS } from '../constants/constants';
+// import { SUBSCRIPTION_TIERS } from '../constants/constants';
 
 const Header = ({ currentUser, onUpgradeClick }) => {
+  // Add any additional state or logic for the header if needed
+
   return (
     <div className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
+        {/* Left side - logo and title */}
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <span className="text-white font-bold text-xl">🤖</span>
@@ -21,6 +23,7 @@ const Header = ({ currentUser, onUpgradeClick }) => {
           </div>
         </div>
         
+        {/* Right side - user controls */}
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <div className={`px-3 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${
@@ -31,7 +34,7 @@ const Header = ({ currentUser, onUpgradeClick }) => {
               {currentUser.subscription === 'free' && '👤'}
               {currentUser.subscription === 'pro' && '👑'}
               {currentUser.subscription === 'enterprise' && '✨'}
-              <span>{SUBSCRIPTION_TIERS[currentUser.subscription].name}</span>
+              <span>{currentUser.tierInfo.name}</span>
             </div>
             
             {currentUser.subscription === 'free' && (
@@ -44,23 +47,23 @@ const Header = ({ currentUser, onUpgradeClick }) => {
               </button>
             )}
           </div>
-
+  
           {currentUser.subscription === 'free' && (
             <div className="text-xs text-gray-600">
-              {currentUser.projectsUsed}/{SUBSCRIPTION_TIERS.free.limit} projects used
+              {currentUser.projectsUsed}/{currentUser.tierInfo.limit} projects used
             </div>
           )}
-
+  
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
             <span className="text-sm text-gray-600">Online</span>
           </div>
-
+  
           <button className="p-2 rounded-full hover:bg-gray-100 transition-colors relative">
             <Bell className="w-5 h-5 text-gray-600" />
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
           </button>
-
+  
           <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
             <Settings className="w-5 h-5 text-gray-600" />
           </button>

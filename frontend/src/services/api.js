@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -12,16 +12,15 @@ const api = axios.create({
 });
 
 // Add token to requests if available
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+api.interceptors.request.use((config) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log('Current user token:', user?.token);  // Debug
+    if (user?.token) {
+        config.headers.Authorization = `Bearer ${user.token}`;
+    }
+    return config;
+});
+
 
 // Auth Service
 export const authService = {
@@ -29,8 +28,11 @@ export const authService = {
         try {
             const response = await api.post('/register', userData);
             if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                // localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify({
+                    ...response.data.user,
+                    token: response.data.token
+                }));
             }
             return response.data;
         } catch (error) {
@@ -42,8 +44,11 @@ export const authService = {
         try {
             const response = await api.post('/login', credentials);
             if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                // localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify({
+                    ...response.data.user,
+                    token: response.data.token
+                }));
             }
             return response.data;
         } catch (error) {
@@ -52,7 +57,7 @@ export const authService = {
     },
 
     logout: () => {
-        localStorage.removeItem('token');
+        // localStorage.removeItem('token');
         localStorage.removeItem('user');
     },
 
@@ -108,8 +113,9 @@ export const freelancerService = {
 
     matchFreelancer: async (projectDetails) => {
         try {
+            // FIXED: Send the projectDetails as flat fields, not nested
             const response = await api.post('/match-freelancer', projectDetails);
-            return response.data;
+            return response.data.match_result;
         } catch (error) {
             throw error.response?.data || { error: 'Failed to match freelancers' };
         }
@@ -128,27 +134,88 @@ export const systemService = {
     }
 };
 
-// Payment Service
+// Payment Service - Corrected endpoint paths (no /subscription prefix)
 export const paymentService = {
     getSubscriptionTiers: async () => {
         try {
             const response = await api.get('/tiers');
-            return response.data.tiers || [];
+            return {
+                ...response.data,
+                tiers: response.data.tiers.map(tier => ({
+                    ...tier,
+                    isCurrent: authService.getCurrentUser()?.subscription?.tier === tier.id
+                }))
+            };
         } catch (error) {
             throw error.response?.data || { error: 'Failed to fetch subscription tiers' };
         }
     },
 
-    createCheckoutSession: async (tier, success_url, cancel_url) => {
+    getCurrentSubscription: async () => {
         try {
-            const response = await api.post('/create-checkout-session', {
-                tier,
-                success_url,
-                cancel_url
-            });
+            const user = authService.getCurrentUser();
+            if (user?.subscription) {
+                return user.subscription;
+            }
+            const response = await api.get('/current');
+            return response.data.subscription;
+        } catch (error) {
+            throw error.response?.data || { error: 'Failed to fetch current subscription' };
+        }
+    },
+
+    createCheckoutSession: async (tier) => {
+        const res = await api.post('/subscription/create-checkout-session', { tier });
+        return res.data;
+    },
+
+
+    cancelSubscription: async () => {
+        try {
+            const response = await api.post('/cancel');
+            const user = authService.getCurrentUser();
+            if (user) {
+                user.subscription = {
+                    tier: 'free',
+                    status: 'canceled',
+                    updatedAt: new Date().toISOString()
+                };
+                localStorage.setItem('user', JSON.stringify(user));
+            }
             return response.data;
         } catch (error) {
-            throw error.response?.data || { error: 'Failed to create checkout session' };
+            throw error.response?.data || {
+                error: 'Failed to cancel subscription',
+                details: error.response?.data?.details
+            };
+        }
+    },
+
+    verifyPayment: async (sessionId) => {
+        try {
+            const response = await api.get(`/verify-payment?session_id=${sessionId}`);
+            if (response.data.success && response.data.subscription) {
+                const user = authService.getCurrentUser();
+                if (user) {
+                    user.subscription = response.data.subscription;
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+            }
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { error: 'Failed to verify payment' };
+        }
+    },
+
+    handlePaymentSuccess: async () => {
+        try {
+            const sessionId = localStorage.getItem('stripe_session_id');
+            if (!sessionId) throw new Error('No active session found');
+            const result = await paymentService.verifyPayment(sessionId);
+            localStorage.removeItem('stripe_session_id');
+            return result;
+        } catch (error) {
+            throw error;
         }
     }
 };

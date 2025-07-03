@@ -24,8 +24,10 @@ const PORT = process.env.PORT || 5000;
 // Apply middleware
 app.use(securityMiddleware);
 app.use(cors({
-    origin: true,
-    credentials: true
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -44,7 +46,7 @@ app.use('/api/', limiter);
 app.use('/api', healthRoutes);
 app.use('/api', freelancerRoutes);
 app.use('/api', chatRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 
 // WebSocket setup

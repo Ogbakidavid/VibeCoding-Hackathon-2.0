@@ -19,8 +19,8 @@ module.exports = {
             name: 'Basic',
             price: 29,
             monthlyPrice: 29,
-            stripeProductId: 'prod_basic_plan',
-            stripePriceId: 'price_basic_monthly',
+            stripeProductId: "prod_Sc12lN8NxWjblK",
+            stripePriceId: "price_1Rgn0F07Ma4q3FW3fTKoVVTP",
             features: {
                 searchesPerMonth: 100,
                 advancedFilters: true,
@@ -36,8 +36,8 @@ module.exports = {
             name: 'Pro',
             price: 79,
             monthlyPrice: 79,
-            stripeProductId: 'prod_pro_plan',
-            stripePriceId: 'price_pro_monthly',
+            stripeProductId: "prod_Sc0WJKPFinYc36",
+            stripePriceId: "price_1RgmVe07Ma4q3FW3RsRykAar",
             features: {
                 searchesPerMonth: 500,
                 advancedFilters: true,
@@ -53,8 +53,8 @@ module.exports = {
             name: 'Enterprise',
             price: 199,
             monthlyPrice: 199,
-            stripeProductId: 'prod_enterprise_plan',
-            stripePriceId: 'price_enterprise_monthly',
+            stripeProductId: "prod_Sc0ZQDfzv0Tr34",
+            stripePriceId: "price_1RgmYU07Ma4q3FW3K4eIyNVz",
             features: {
                 searchesPerMonth: -1, // Unlimited
                 advancedFilters: true,
