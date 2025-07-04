@@ -1,6 +1,6 @@
 const Message = ({ message, isBot, timestamp }) => (
   <div className={`flex ${isBot ? 'justify-start' : 'justify-end'} mb-4`}>
-    <div className={`flex max-w-full sm:max-w-xs lg:max-w-md ${isBot ? 'flex-row' : 'flex-row-reverse'}`}>
+    <div className={`flex max-w-full max-sm:max-w-md w-lg  ${isBot ? 'flex-row' : 'flex-row-reverse'}`}>
       <div className={`flex-shrink-0 ${isBot ? 'mr-3' : 'ml-3'}`}>
         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
           isBot ? 'bg-blue-500' : 'bg-gray-200'

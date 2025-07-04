@@ -6,7 +6,7 @@ const Header = ({ currentUser, onUpgradeClick }) => {
 
   return (
     <div className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-lg:flex-col max-lg:items-start max-lg:space-y-5">
         {/* Left side - logo and title */}
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -24,7 +24,7 @@ const Header = ({ currentUser, onUpgradeClick }) => {
         </div>
         
         {/* Right side - user controls */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 max-sm:flex-col max-sm:items-start max-sm:space-y-3">
           <div className="flex items-center space-x-2">
             <div className={`px-3 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${
               currentUser.subscription === 'free' ? 'bg-gray-100 text-gray-700' :

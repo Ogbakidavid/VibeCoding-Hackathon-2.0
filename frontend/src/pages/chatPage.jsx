@@ -203,7 +203,7 @@ const ChatPage = () => {
         {/* Message Input */}
         <div className="bg-white border-t border-gray-200 px-2 sm:px-4 py-4">
             <div className="max-w-4xl mx-auto">
-                <div className="flex flex-col sm:flex-row items-end sm:space-x-3 space-y-2 sm:space-y-0">
+                <div className="flex flex-col md:flex-row items-end sm:space-x-3 space-y-2 sm:space-y-0">
                     {/* Text input */}
                     <div className="flex-1 relative w-full">
                         <textarea
@@ -212,8 +212,8 @@ const ChatPage = () => {
                             onChange={(e) => setInputMessage(e.target.value)}
                             onKeyPress={handleKeyPress}
                             placeholder="Describe your project needs... (e.g., 'I need a logo designed for my startup, budget $200')"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                            rows="1"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none max-md:h-28"
+                            rows="2"
                             style={{ minHeight: '44px', maxHeight: '120px' }}
                             disabled={isLoading || isTyping}
                         />
