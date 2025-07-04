@@ -99,7 +99,7 @@ const SubscriptionModal = ({ visible, onClose, onSelectPlan, currentPlan }) => {
           ×
         </button>
         <h2 className="text-2xl font-bold mb-4 text-center">Choose a Subscription Plan</h2>
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-col md:flex-row justify-center gap-4">
           {plans.map(plan => (
             <div
               key={plan.key}

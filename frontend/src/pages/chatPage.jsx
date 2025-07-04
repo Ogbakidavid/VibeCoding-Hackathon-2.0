@@ -164,95 +164,95 @@ const ChatPage = () => {
 
     return (
         <>
-            <Header currentUser={{ subscription, tierInfo, projectsUsed }} onUpgradeClick={onUpgradeClick} />
+        <Header currentUser={{ subscription, tierInfo, projectsUsed }} onUpgradeClick={onUpgradeClick} />
 
-            {/* Subscription Modal */}
-            <SubscriptionModal
-                visible={showSubscriptionModal}
-                onClose={() => setShowSubscriptionModal(false)}
-                onSelectPlan={handleSelectPlan}
-                currentPlan={subscription}
-            />
+        {/* Subscription Modal */}
+        <SubscriptionModal
+            visible={showSubscriptionModal}
+            onClose={() => setShowSubscriptionModal(false)}
+            onSelectPlan={handleSelectPlan}
+            currentPlan={subscription}
+        />
 
-            {/* Messages Container */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-                <div className="max-w-4xl mx-auto">
-                    {messages.map((message) => (
-                        <Message
-                            key={message.id}
-                            message={message.text}
-                            isBot={message.isBot}
-                            timestamp={message.timestamp}
+        {/* Messages Container */}
+        <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-4 space-y-4">
+            <div className="max-w-4xl mx-auto">
+                {messages.map((message) => (
+                    <Message
+                        key={message.id}
+                        message={message.text}
+                        isBot={message.isBot}
+                        timestamp={message.timestamp}
+                    />
+                ))}
+
+                {/* Typing indicator */}
+                {isTyping && <TypingIndicator isTyping={isTyping} />}
+
+                {/* Scroll anchor */}
+                <div ref={messagesEndRef} />
+            </div>
+        </div>
+
+        {/* Quick Actions */}
+        <QuickActions
+            onQuickAction={handleQuickAction}
+            disabled={isLoading || isTyping}
+        />
+
+        {/* Message Input */}
+        <div className="bg-white border-t border-gray-200 px-2 sm:px-4 py-4">
+            <div className="max-w-4xl mx-auto">
+                <div className="flex flex-col sm:flex-row items-end sm:space-x-3 space-y-2 sm:space-y-0">
+                    {/* Text input */}
+                    <div className="flex-1 relative w-full">
+                        <textarea
+                            ref={inputRef}
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            placeholder="Describe your project needs... (e.g., 'I need a logo designed for my startup, budget $200')"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            rows="1"
+                            style={{ minHeight: '44px', maxHeight: '120px' }}
+                            disabled={isLoading || isTyping}
                         />
-                    ))}
 
-                    {/* Typing indicator */}
-                    {isTyping && <TypingIndicator isTyping={isTyping} />}
-
-                    {/* Scroll anchor */}
-                    <div ref={messagesEndRef} />
-                </div>
-            </div>
-
-            {/* Quick Actions */}
-            <QuickActions
-                onQuickAction={handleQuickAction}
-                disabled={isLoading || isTyping}
-            />
-
-            {/* Message Input */}
-            <div className="bg-white border-t border-gray-200 px-4 py-4">
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex items-end space-x-3">
-                        {/* Text input */}
-                        <div className="flex-1 relative">
-                            <textarea
-                                ref={inputRef}
-                                value={inputMessage}
-                                onChange={(e) => setInputMessage(e.target.value)}
-                                onKeyPress={handleKeyPress}
-                                placeholder="Describe your project needs... (e.g., 'I need a logo designed for my startup, budget $200')"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                rows="1"
-                                style={{ minHeight: '44px', maxHeight: '120px' }}
-                                disabled={isLoading || isTyping}
-                            />
-
-                            {/* Character counter */}
-                            <div className="absolute bottom-1 right-2 text-xs text-gray-400">
-                                {inputMessage.length}/500
-                            </div>
+                        {/* Character counter */}
+                        <div className="absolute bottom-1 right-2 text-xs text-gray-400">
+                            {inputMessage.length}/500
                         </div>
-
-                        {/* Send button */}
-                        <button
-                            onClick={handleSendMessage}
-                            disabled={inputMessage.trim() === '' || isLoading || isTyping}
-                            className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
-                        >
-                            {isLoading ? (
-                                <>
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                    <span>Sending...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <span>Send</span>
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                    </svg>
-                                </>
-                            )}
-                        </button>
                     </div>
 
-                    {/* Input hints */}
-                    <div className="mt-2 text-xs text-gray-500">
-                        💡 Try: "I need a logo for $100 by Friday" or "Find me a React developer for 2 weeks"
-                    </div>
+                    {/* Send button */}
+                    <button
+                        onClick={handleSendMessage}
+                        disabled={inputMessage.trim() === '' || isLoading || isTyping}
+                        className="w-full sm:w-auto mt-2 sm:mt-0 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2"
+                    >
+                        {isLoading ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <span>Sending...</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>Send</span>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+                            </>
+                        )}
+                    </button>
+                </div>
+
+                {/* Input hints */}
+                <div className="mt-2 text-xs text-gray-500">
+                    💡 Try: "I need a logo for $100 by Friday" or "Find me a React developer for 2 weeks"
                 </div>
             </div>
-        </>
+        </div>
+    </>
     );
 };
 
